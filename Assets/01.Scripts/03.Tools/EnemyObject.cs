@@ -35,6 +35,7 @@ public class EnemyObject : MonoBehaviour
         foreach (Vector3Int tilePos in path)
         {
             Vector3 targetPosition = tilemap.GetCellCenterWorld(tilePos);
+            targetPosition.z = targetPosition.y;
 
             // 오브젝트가 타겟 위치에 도달할 때까지 이동
             while ((transform.position - targetPosition).sqrMagnitude > 0.01f)

@@ -82,17 +82,21 @@ public class TileManager : MonoBehaviour
     }
 
     // 타워가 이동할 때 호출되는 메서드
-    public void MoveTower(TowerObject tower, Vector3Int newTilePos)
+    public void MoveTower(TowerObject tower, Vector3Int newTilePos, Vector3 originalPos)
     {
-        Vector3Int currentTilePos = tilemap.WorldToCell(tower.transform.position);
+        Vector3Int currentTilePos = tilemap.WorldToCell(originalPos);
+        //Vector3Int currentTilePos = tilemap.WorldToCell(tower.transform.position);
         if (!tileUsed[newTilePos.x - mapMin, newTilePos.y - mapMin])
         {
             tileUsed[currentTilePos.x - mapMin, currentTilePos.y - mapMin] = false; // 이전 위치를 사용되지 않음으로 표시
             towerObjects[currentTilePos.x - mapMin, currentTilePos.y - mapMin] = null; // 해당 위치의 타워를 초기화
+            Palog.Log("초기화 완료 : " + tileUsed[currentTilePos.x - mapMin, currentTilePos.y - mapMin] + " / " + towerObjects[currentTilePos.x - mapMin, currentTilePos.y - mapMin]);
+            Palog.Log(string.Format("초기화된 좌표 x:{0}, y:{1}", currentTilePos.x - mapMin, currentTilePos.y - mapMin));
             tower.transform.position = tilemap.GetCellCenterWorld(newTilePos);
             tower.SetLayerPos();
             tileUsed[newTilePos.x - mapMin, newTilePos.y - mapMin] = true; // 새로운 위치를 사용 중으로 표시
             towerObjects[newTilePos.x - mapMin, newTilePos.y - mapMin] = tower; // 해당 위치로 타워를 추가
+            tower.battleState = true;   // 전투상태로 재활성화
         }
         else if (towerObjects[newTilePos.x - mapMin, newTilePos.y - mapMin] != null)
         {
@@ -101,39 +105,51 @@ public class TileManager : MonoBehaviour
                 Palog.Log("합성을 시작합니다.");
                 int upgradeLevel = tower.status.level;
 
-                TowerObject newTower = Instantiate(DataManager.instance.ReturnTowerObject(upgradeLevel + 1), tilemap.GetCellCenterWorld(newTilePos), Quaternion.identity);
-
-                if (newTower != null)
+                if (DataManager.instance.ReturnNextTowerTier(upgradeLevel))
                 {
-                    Palog.Log("새로운 타워 확인. 설치합니다.");
-                    //Destroy(towerObjects[newTilePos.x - mapMin, newTilePos.y - mapMin]);
-                    //Destroy(tower);
-                    towerObjects[newTilePos.x - mapMin, newTilePos.y - mapMin].gameObject.SetActive(false);
-                    tower.gameObject.SetActive(false);
+                    TowerObject newTower = Instantiate(DataManager.instance.ReturnTowerObject(upgradeLevel + 1), tilemap.GetCellCenterWorld(newTilePos), Quaternion.identity);
 
-                    tileUsed[currentTilePos.x - mapMin, currentTilePos.y - mapMin] = false; // 이전 위치를 사용되지 않음으로 표시
-                    towerObjects[currentTilePos.x - mapMin, currentTilePos.y - mapMin] = null; // 해당 위치의 타워를 초기화
-                    tileUsed[newTilePos.x - mapMin, newTilePos.y - mapMin] = true; // 새로운 위치를 사용 중으로 표시
-                    towerObjects[newTilePos.x - mapMin, newTilePos.y - mapMin] = newTower; // 해당 위치로 타워를 추가
-                    newTower.gameObject.SetActive(true);
-                    newTower.SetLayerPos();
+                    if (newTower != null)
+                    {
+                        Palog.Log("새로운 타워 확인. 설치합니다.");
+                        //Destroy(towerObjects[newTilePos.x - mapMin, newTilePos.y - mapMin]);
+                        //Destroy(tower);
+                        towerObjects[newTilePos.x - mapMin, newTilePos.y - mapMin].gameObject.SetActive(false);
+                        tower.gameObject.SetActive(false);
+
+                        tileUsed[currentTilePos.x - mapMin, currentTilePos.y - mapMin] = false; // 이전 위치를 사용되지 않음으로 표시
+                        towerObjects[currentTilePos.x - mapMin, currentTilePos.y - mapMin] = null; // 해당 위치의 타워를 초기화
+                        Palog.Log("초기화 완료");
+                        tileUsed[newTilePos.x - mapMin, newTilePos.y - mapMin] = true; // 새로운 위치를 사용 중으로 표시
+                        towerObjects[newTilePos.x - mapMin, newTilePos.y - mapMin] = newTower; // 해당 위치로 타워를 추가
+                        newTower.gameObject.SetActive(true);
+                        newTower.SetLayerPos();
+                    }
+                }
+                else
+                {
+                    Palog.Log("이 이상 업그레이드 할 수 없습니다.");
+                    GameManager.instance.tileSelector.ReturnToOriginalPosition();
                 }
             }
             else
             {
                 Palog.Log("해당 위치에 이미 타워가 있습니다.");
+                GameManager.instance.tileSelector.ReturnToOriginalPosition();
             }
         }
         else
         {
             Palog.Log("해당 위치에 이미 타워가 있습니다.");
+            GameManager.instance.tileSelector.ReturnToOriginalPosition();
         }
     }
 
     // 타워의 보유 여부를 확인해주는 메서드
     public bool GetTowerState(Vector3Int tilePos)
     {
-        if (towerObjects[tilePos.x - mapMin, tilePos.y - mapMin] != null)
+        Palog.Log(string.Format("선택된 좌표 x:{0}, y:{1}", tilePos.x - mapMin, tilePos.y - mapMin));
+        if (tileUsed[tilePos.x - mapMin, tilePos.y - mapMin] == true && towerObjects[tilePos.x - mapMin, tilePos.y - mapMin] != null)
         {
             Palog.Log("타워보유상황 : True");
             return true;

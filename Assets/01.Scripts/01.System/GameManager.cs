@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     public bool isGameClear = false;
 
     public StageManager stageManager;
+    public TileSelector tileSelector;
 
     private void Awake()
     {
@@ -39,6 +40,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         stageManager = GetComponent<StageManager>();
+        tileSelector = GetComponent<TileSelector>();
 
         stageManager.InitializeLife();
 
@@ -51,6 +53,7 @@ public class GameManager : MonoBehaviour
         {
             // 첫 번째 타일의 중앙에 오브젝트 생성
             Vector3 startPosition = tilemap.GetCellCenterWorld(path[0]);
+            startPosition.z = startPosition.y;
             EnemyObject movingObject = Instantiate(objectPrefab, startPosition, Quaternion.identity).GetComponent<EnemyObject>();
             movingObject.SetPath(path);
 

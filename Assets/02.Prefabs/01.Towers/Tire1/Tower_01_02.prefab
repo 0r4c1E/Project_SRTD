@@ -232,7 +232,7 @@ MonoBehaviour:
     maxHealth: 0
     hp: 0
     attack: 2
-    attackSpeed: 0.8
+    attackSpeed: 1.2
     attackCount: 2
     defense: 0
     speed: 0

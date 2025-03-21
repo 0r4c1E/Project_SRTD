@@ -26,17 +26,17 @@ public class TowerObject : MonoBehaviour
         StartCoroutine(TowerCoroutine());
     }
 
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(0)) // 마우스 왼쪽 버튼 클릭 감지
-        {
-            battleState = false;
-        }
-        else if (Input.GetMouseButtonUp(0) && !battleState)
-        {
-            battleState = true;
-        }
-    }
+    //private void Update()
+    //{
+    //    if (Input.GetMouseButtonDown(0)) // 마우스 왼쪽 버튼 클릭 감지
+    //    {
+    //        battleState = false;
+    //    }
+    //    else if (Input.GetMouseButtonUp(0) && !battleState)
+    //    {
+    //        battleState = true;
+    //    }
+    //}
 
     public void SetLayerPos()
     {
@@ -129,39 +129,4 @@ public class TowerObject : MonoBehaviour
             }
         }
     }
-
-
-    //IEnumerator TowerCoroutine()
-    //{
-    //    WaitForSeconds waitTime = new WaitForSeconds(.1f);
-    //    float attackCooldown = 0;
-    //    while (true)
-    //    {
-    //        yield return waitTime;
-    //        if (enemies.Count > 0 && battleState)
-    //        {
-    //            attackCooldown += .1f;
-    //            if (attackCooldown >= status.attackSpeed)
-    //            {
-    //                // 타겟이 없을 경우 현재 타겟을 리스트에서 랜덤으로 골라서 선택
-    //                //if (nowTarget == null)
-    //                //{
-    //                //    nowTarget = enemies[Random.Range(0, enemies.Count)];
-    //                //}
-    //                if (nowTarget.Length < status.attackCount && enemies.Count >= status.attackCount)
-    //                {
-    //                    for (int i = nowTarget.Length; i < status.attackCount; i++)
-    //                    {
-    //                        nowTarget = 
-    //                    }
-    //                }
-    //                if (nowTarget != null)
-    //                {
-    //                    AttackEnemy();
-    //                }
-    //                attackCooldown = 0;
-    //            }
-    //        }
-    //    }
-    //}
 }

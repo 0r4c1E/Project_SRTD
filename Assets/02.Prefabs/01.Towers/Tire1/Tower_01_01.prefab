@@ -231,7 +231,7 @@ MonoBehaviour:
     level: 1
     maxHealth: 0
     hp: 0
-    attack: 4
+    attack: 3
     attackSpeed: 1
     attackCount: 1
     defense: 0

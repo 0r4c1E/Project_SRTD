@@ -11,6 +11,7 @@ public class DataManager : MonoBehaviour
     // 기능테스트용 임시 타워 리스트
     public List<TowerObject> towerTire1 = new List<TowerObject>();
     public List<TowerObject> towerTire2 = new List<TowerObject>();
+    public List<TowerObject> towerTire3 = new List<TowerObject>();
 
     private void Awake()
     {
@@ -31,7 +32,17 @@ public class DataManager : MonoBehaviour
         {
             return towerTire2[Random.RandomRange(0, towerTire2.Count)];
         }
+        else if (level == 3)
+        {
+            return towerTire3[Random.RandomRange(0, towerTire3.Count)];
+        }
         else return null;
+    }
+
+    public bool ReturnNextTowerTier(int level)
+    {
+        if (level < 3) return true;
+        else return false;
     }
 }
 
